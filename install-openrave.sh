@@ -8,9 +8,9 @@
 
 # Check ubuntu version
 UBUNTU_VER=$(lsb_release -sr)
-if [ ${UBUNTU_VER} != '14.04' ] && [ ${UBUNTU_VER} != '16.04' ] && [ ${UBUNTU_VER} != '18.04' ]; then
+if [ ${UBUNTU_VER} != '14.04' ] && [ ${UBUNTU_VER} != '16.04' ] && [ ${UBUNTU_VER} != '18.04' ] && [ ${UBUNTU_VER} != '20.04' ]; then
     echo "ERROR: Unsupported Ubuntu version: ${UBUNTU_VER}"
-    echo "  Supported versions are: 14.04, 16.04 and 18.04"
+    echo "  Supported versions are: 14.04, 16.04, 18.04 and 20.04"
     exit 1
 fi
 
@@ -31,9 +31,9 @@ cd openrave; git reset --hard ${RAVE_COMMIT}
 mkdir build; cd build
 if [ ${UBUNTU_VER} = '14.04' ] || [ ${UBUNTU_VER} = '16.04' ]; then
   cmake -DODE_USE_MULTITHREAD=ON -DOSG_DIR=/usr/local/lib64/ ..
-elif [ ${UBUNTU_VER} = '18.04' ]; then
+elif [ ${UBUNTU_VER} = '18.04' ] && [ ${UBUNTU_VER} = '20.04' ]; then
   cmake -DODE_USE_MULTITHREAD=ON -DCMAKE_CXX_STANDARD=11            \
-        -DBoost_NO_SYSTEM_PATHS=TRUE -DBOOST_ROOT=/usr/local/ ..
+        -DBoost_NO_SYSTEM_PATHS=TRUE -DBOOST_ROOT=~/git/boost_1_58_0/ ..
 fi
 make -j `nproc`
 sudo make install

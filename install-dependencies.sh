@@ -8,9 +8,9 @@
 
 # Check ubuntu version
 UBUNTU_VER=$(lsb_release -sr)
-if [ ${UBUNTU_VER} != '14.04' ] && [ ${UBUNTU_VER} != '16.04' ] && [ ${UBUNTU_VER} != '18.04' ]; then
+if [ ${UBUNTU_VER} != '14.04' ] && [ ${UBUNTU_VER} != '16.04' ] && [ ${UBUNTU_VER} != '18.04' ] && [ ${UBUNTU_VER} != '20.04' ]; then
     echo "ERROR: Unsupported Ubuntu version: ${UBUNTU_VER}"
-    echo "  Supported versions are: 14.04, 16.04 and 18.04"
+    echo "  Supported versions are: 14.04, 16.04, 18.04 and 20.04"
     exit 1
 fi
 
@@ -28,13 +28,23 @@ if [ ${UBUNTU_VER} = '14.04' ]; then
   sudo apt-add-repository -y ppa:imnmfotmal/libccd
 fi
 sudo apt-get update
+
 # Programs
-sudo apt-get install -y --no-install-recommends build-essential cmake doxygen   \
-g++ git ipython octave python-dev python-h5py python-numpy python-pip           \
-python-scipy python-setuptools python-wheel wget mlocate
+if [ ${UBUNTU_VER} = '20.04' ]; then
+  sudo apt-get install -y --no-install-recommends build-essential cmake doxygen \
+  g++ git octave wget mlocate python2-pip python-dev-is-python2
+  # install python 2 libraries using pip
+  pip install --user numpy scipy matplotlib ipython jupyter pandas sympy nose \
+  h5py setuptools wheel
+else
+  sudo apt-get install -y --no-install-recommends build-essential cmake doxygen   \
+  g++ git ipython octave python-dev python-h5py python-numpy python-pip           \
+  python-scipy python-setuptools python-wheel wget mlocate
+fi
+
 if [ ${UBUNTU_VER} = '14.04' ]; then
   sudo apt-get install -y --no-install-recommends qt4-dev-tools zlib-bin
-elif [ ${UBUNTU_VER} = '16.04' ] || [ ${UBUNTU_VER} = '18.04' ]; then
+elif [ ${UBUNTU_VER} = '16.04' ] || [ ${UBUNTU_VER} = '18.04' ] || [ ${UBUNTU_VER} = '20.04' ]; then
   sudo apt-get install -y --no-install-recommends qt5-default minizip
 fi
 # Libraries
@@ -42,20 +52,23 @@ sudo apt-get install -y --no-install-recommends ann-tools libann-dev            
 libassimp-dev libavcodec-dev libavformat-dev libeigen3-dev libfaac-dev          \
 libflann-dev libfreetype6-dev liblapack-dev libglew-dev libgsm1-dev             \
 libmpfi-dev  libmpfr-dev liboctave-dev libode-dev libogg-dev libpcre3-dev       \
-libqhull-dev libsoqt-dev-common libsoqt4-dev libswscale-dev libtinyxml-dev      \
+libqhull-dev libswscale-dev libtinyxml-dev      \
 libvorbis-dev libx264-dev libxml2-dev libxvidcore-dev libbz2-dev
 if [ ${UBUNTU_VER} = '14.04' ]; then
   sudo apt-get install -y --no-install-recommends collada-dom-dev libccd      \
-  libpcrecpp0 liblog4cxx10-dev libqt4-dev
+  libpcrecpp0 liblog4cxx10-dev libqt4-dev libsoqt-dev-common libsoqt4-dev
 elif [ ${UBUNTU_VER} = '16.04' ] || [ ${UBUNTU_VER} = '18.04' ]; then
   sudo apt-get install -y --no-install-recommends libccd-dev                  \
-  libcollada-dom2.4-dp-dev liblog4cxx-dev libminizip-dev octomap-tools
+  libcollada-dom2.4-dp-dev liblog4cxx-dev libminizip-dev octomap-tools libsoqt-dev-common libsoqt4-dev
+elif [ ${UBUNTU_VER} = '20.04' ]; then
+  sudo apt-get install -y --no-install-recommends libccd-dev                  \
+  libcollada-dom2.4-dp-dev liblog4cxx-dev libminizip-dev octomap-tools libsoqt520
 fi
 
 # Install boost
 if [ ${UBUNTU_VER} = '14.04' ] || [ ${UBUNTU_VER} = '16.04' ]; then
     sudo apt-get install -y --no-install-recommends libboost-all-dev libboost-python-dev
-elif [ ${UBUNTU_VER} = '18.04' ]; then
+elif [ ${UBUNTU_VER} = '18.04' ] || [ ${UBUNTU_VER} = '20.04' ]; then
     # Install boost 1.58 from source
     BOOST_SRC_DIR=~/git/boost_1_58_0
     mkdir -p ~/git; cd ~/git
